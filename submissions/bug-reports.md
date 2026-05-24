@@ -62,7 +62,9 @@ Librarians lose critical context about overdue returns. They cannot track which 
 
 ### Evidence
 
-Screenshot taken: Return dialog shows only "Trả sách thành công." toast with no overdue warning text.
+![BUG-01 Screenshot Evidence](evidence/screenshot_BUG01.png)
+
+*The screenshot shows BR001 with "Quá hạn" (Overdue) status visible in the record list. After clicking "Trả sách", only the generic "Trả sách thành công." toast appears at the bottom — no overdue warning is displayed anywhere on screen.*
 
 ---
 
@@ -116,7 +118,9 @@ A new member is created in the system with the invalid email address `user@domai
 
 ### Evidence
 
-Screenshot taken: Toast "Thêm thành viên thành công! Mã: MEM007" visible after submitting `user@domain` as email.
+![BUG-02 Screenshot Evidence](evidence/screenshot_BUG02.png)
+
+*The screenshot shows the Add Member form with email `user@domain` (no dot in domain) submitted. The system responds with the success toast "Thêm thành viên thành công! Mã: MEM007" — confirming a new member record was created despite the invalid email format.*
 
 ---
 
@@ -168,7 +172,9 @@ This message incorrectly implies the email format is wrong, not that it is a dup
 
 ### Evidence
 
-Error toast message "Email không hợp lệ." was observed after submitting a known existing email `ba.nguyen@email.com`.
+![BUG-03 Screenshot Evidence](evidence/screenshot_BUG03.png)
+
+*The screenshot shows the Add Member form submitted with existing email `ba.nguyen@email.com`. The system displays "Email không hợp lệ." — an incorrect error message that implies a format problem rather than informing the librarian that the email is already registered.*
 
 ---
 
@@ -224,7 +230,9 @@ At step 6, the system:
 
 ### Evidence
 
-Screenshot taken: Toast "Mượn sách thành công!" and BOOK008 showing "Đang mượn" after MEM003 already had 3 active borrows. Borrow record for BOOK008 visible in the system.
+![BUG-04 Screenshot Evidence](evidence/screenshot_BUG04.png)
+
+*The screenshot shows MEM003 with 4 active borrow records (BOOK001, BOOK002, BOOK005, BOOK008 all showing "Đang mượn"). The success toast "Mượn sách thành công!" confirms BOOK008 was accepted as the 4th borrow, violating the 3-book limit defined in REQ-04.*
 
 ---
 
@@ -234,5 +242,5 @@ Screenshot taken: Toast "Mượn sách thành công!" and BOOK008 showing "Đang
 |--------|------------------|----------------|
 | BUG-01 | Return logic does not check overdue status before generating the success notification | Business Logic / Backend |
 | BUG-02 | Email validation is client-side only or regex is too permissive (accepts `@` without requiring `.` in domain) | Validation / Backend |
-| BUG-03 | Borrow limit check is missing or not triggered in the borrow workflow | Business Logic / Backend |
-| BUG-04 | Error message mapping: duplicate email constraint from DB is incorrectly displayed as "invalid format" | Backend / Error Handling |
+| BUG-03 | Error message mapping: duplicate email constraint from DB is incorrectly displayed as "invalid format" | Backend / Error Handling |
+| BUG-04 | Borrow limit check is missing or not triggered in the borrow workflow | Business Logic / Backend |

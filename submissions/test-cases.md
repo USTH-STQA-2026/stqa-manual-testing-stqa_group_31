@@ -9,6 +9,28 @@
 
 ---
 
+## Testing Technique Justification
+
+This section explains **why** each testing technique was selected for each requirement, based on the nature of the input domain and business rules.
+
+| REQ | Technique(s) Applied | Justification |
+|-----|---------------------|---------------|
+| REQ-01 | **EP** | Login has clearly separable valid/invalid input classes: email exists vs. not exists, password correct vs. wrong, fields empty vs. filled. EP efficiently covers each class with one representative — exhaustive testing is unnecessary. |
+| REQ-02 | **EP** | Role-based access control has two distinct user classes (Librarian vs. Member), each with different view permissions. EP maps naturally to these partitions. No boundary values to analyse. |
+| REQ-03 | **EP** | Search inputs partition into: keyword matches a title, keyword matches an author, keyword has no match, uppercase vs. lowercase. EP covers all meaningful classes. Filter by genre adds another partition axis. |
+| REQ-04 | **EP + BVA + Decision Table** | EP covers book/member status classes. **BVA** is applied to the numeric borrow limit (0, 1, 2, 3 = at limit, 4 = over limit) because bugs most often occur at boundary values. **Decision Table** captures all combinations of three independent conditions (book available, borrow count < 3, account active), ensuring no rule combination is missed. |
+| REQ-05 | **EP** | Return scenarios partition into: normal return (on time) and overdue return. EP covers both classes. No numeric boundaries to test. |
+| REQ-06 | **EP** | Overdue detection separates records into: past due date (overdue) vs. within due date (not overdue). Two partitions, straightforward EP application. |
+| REQ-07 | **EP + BVA** | Member addition partitions into: valid email format, invalid format (missing TLD), duplicate email, valid/invalid phone. **BVA** is applied to email format validation — testing the exact boundary between a valid format (`user@domain.com`) and an invalid one (`user@domain`) reveals whether the regex is permissive at the edge case. |
+| REQ-08 | **EP** | Borrow record lookup partitions by role: Librarian sees all records vs. Member sees only own records. Additional partition: search by member ID (Librarian only). EP captures all access-control classes. |
+
+**Summary of technique selection rationale:**
+- **EP** is applied universally because every input domain has valid/invalid partitions and testing one value per partition is sufficient.
+- **BVA** is applied to REQ-04 (numeric borrow limit) and REQ-07 (email format boundary) because defects are statistically more likely at boundaries than in the middle of a partition.
+- **Decision Table** is applied exclusively to REQ-04 because it has three independent boolean conditions whose combinations produce different outcomes — a table ensures all 8 rule combinations are considered and no interaction is overlooked.
+
+---
+
 ## Step 1: Input Domain Modeling (IDM)
 
 ### IDM — Login (REQ-01)
