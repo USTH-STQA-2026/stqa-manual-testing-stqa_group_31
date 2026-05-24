@@ -89,7 +89,7 @@ Applied to all 8 requirements. Each input domain was partitioned into valid and 
 Applied to REQ-04 (Borrow Book) for the 3-book borrow limit. Boundary values tested:
 - 0 books (lower boundary) → TC-10
 - 1 book (within range) → TC-11
-- 2 books (within range) → TC-11
+- 2 books (within range) → TC-12
 - 3 books (at upper boundary / limit) → TC-12
 - 4 books (over boundary) → TC-13 (**BUG-04 discovered here**)
 
