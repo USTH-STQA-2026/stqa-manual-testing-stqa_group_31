@@ -148,6 +148,8 @@ This section explains **why** each testing technique was selected for each requi
 | TC-02 | Login with non-existent email | Login page open | 1. Enter email not in system. 2. Enter any password. 3. Click "Login". | Email: `noone@email.com`, PW: `anypass123` | Message: "Member not found.". Page does not navigate. | REQ-01 | EP |
 | TC-03 | Login with correct email but wrong password | Login page open | 1. Enter valid email. 2. Enter wrong password. 3. Click "Login". | Email: `librarian@library.com`, PW: `wrongpass` | Message: "Incorrect password.". Page does not navigate. | REQ-01 | EP |
 | TC-04 | Successful login as Librarian | Login page open | 1. Enter librarian email. 2. Enter correct password. 3. Click "Login". | Email: `librarian@library.com`, PW: `admin123` | Redirects to home page. AppBar shows username and role "(Librarian)". | REQ-01 | EP |
+| TC-28 | Login with only password field empty | Login page open | 1. Enter valid email. 2. Leave Password blank. 3. Click "Login". | Email: `librarian@library.com`, PW: `""` | Error message: "Please enter email and password". Page does not navigate. | REQ-01 | EP |
+| TC-29 | Successful login as Member | Login page open | 1. Enter member email. 2. Enter correct password. 3. Click "Login". | Email: `dam.tran@email.com`, PW: `password123` | Redirects to home page. AppBar shows username and role "(Member)". Navigation shows only "Books" and "Borrow / Return" tabs. | REQ-01 | EP |
 
 ### REQ-02: View Book List
 
@@ -155,6 +157,7 @@ This section explains **why** each testing technique was selected for each requi
 |-------|---------------|---------------|-------|------------|-----------------|-----|-----------|
 | TC-05 | Librarian views complete book list with all details | Logged in as Librarian | 1. Observe "Books" tab. | — | List displays at least 18 books. Each book shows: title, author, genre, year, status. BOOK003 shows "Borrowed". | REQ-02 | EP |
 | TC-06 | Member does not see "Members" tab | Logged in as Member `dam.tran@email.com / password123` | 1. Observe bottom navigation bar. | — | Only 2 tabs shown: "Books" and "Borrow / Return". No "Members" tab visible. | REQ-02 | EP |
+| TC-30 | Book with "Lost" status is shown in list | Logged in as Librarian | 1. Go to "Books" tab. 2. Locate BOOK007. 3. Observe displayed status. | Book: BOOK007 | BOOK007 appears in the list with status "Lost" (or equivalent Vietnamese label). | REQ-02 | EP |
 
 ### REQ-03: Search & Filter
 
@@ -163,6 +166,8 @@ This section explains **why** each testing technique was selected for each requi
 | TC-07 | Search is case-insensitive | Logged in, on "Books" tab | 1. Enter lowercase keyword in search box. 2. Observe results. | Keyword: `flutter` | Displays "Flutter Programming Basics" (BOOK001). Same result as searching "Flutter". | REQ-03 | EP |
 | TC-08 | Search for non-existent keyword | Logged in, on "Books" tab | 1. Enter keyword not in DB. 2. Observe results. | Keyword: `XYZ999NOTEXIST` | Message: "No books found.". List is empty. | REQ-03 | EP |
 | TC-09 | Filter books by genre | Logged in, on "Books" tab | 1. Enter genre in filter box. 2. Observe results. | Genre: `Kinh tế` | Only Economics books displayed (BOOK007, BOOK014, BOOK015). | REQ-03 | EP |
+| TC-31 | Search by author name — returns matching books | Logged in, on "Books" tab | 1. Enter an author name that exists in the DB. 2. Observe results. | Keyword: `Nguyen Minh Duc` | All books whose author name contains "Nguyen Minh Duc" are displayed. No unrelated books shown. | REQ-03 | EP |
+| TC-32 | Partial keyword search returns all matching results | Logged in, on "Books" tab | 1. Enter a partial keyword that matches multiple titles. 2. Observe results. | Keyword: `Python` | All books with "Python" in title or author are displayed (at least 2 results if available). Search is not limited to exact match. | REQ-03 | EP |
 
 ### REQ-04: Borrow Book
 
@@ -174,6 +179,7 @@ This section explains **why** each testing technique was selected for each requi
 | TC-13 | Borrow 4th book — exceeds limit (BVA — 4 > limit 3) | Logged in as MEM003, currently borrowing 3 books | 1. Click "+" next to BOOK008. 2. Confirm in dialog. | Book: BOOK008, Member: MEM003 | System rejects. Error message: "Borrow limit of 3 books reached" or equivalent. BOOK008 remains "Available". | REQ-04 | BVA, DT-3 |
 | TC-14 | Borrow rejected for suspended account | Login as MEM004 (`cu.le@email.com / password123`) | 1. Login as MEM004. 2. Click "+" next to any available book. 3. Confirm borrow. | Member: MEM004 (Suspended), Book: BOOK001 | System rejects borrow. Error message describes suspension reason. | REQ-04 | EP, DT-2 |
 | TC-15 | Borrow rejected for expired account | Login as MEM005 (`binh.pham@email.com / password123`) | 1. Login as MEM005. 2. Click "+" next to any available book. 3. Confirm borrow. | Member: MEM005 (Expired), Book: BOOK001 | System rejects borrow. Error message describes expiration reason (different from suspended). | REQ-04 | EP, DT-2 |
+| TC-33 | Borrow rejected when book is already "Borrowed" — button disabled | Logged in as MEM003, BOOK003 status is "Borrowed" | 1. Go to "Books" tab. 2. Locate BOOK003 (status Borrowed). 3. Observe the "+" borrow button. | Book: BOOK003 (Borrowed), Member: MEM003 | The "+" borrow button is disabled or hidden for BOOK003. No borrow dialog appears. BOOK003 remains "Borrowed". | REQ-04 | EP, DT-5 |
 
 ### REQ-05: Return Book
 
@@ -197,6 +203,7 @@ This section explains **why** each testing technique was selected for each requi
 | TC-21 | Add member with invalid email — missing dot in domain | Logged in as Librarian, Add Member form open | 1. Enter email in format `user@domain` (no dot in domain). 2. Fill other fields with valid data. 3. Click "Add Member". | Email: `user@domain`, Name: `Test User`, Phone: `0900000002` | System rejects. Message: "Invalid email" or equivalent. No new member created. | REQ-07 | EP, BVA |
 | TC-22 | Add member with already-existing email | Logged in as Librarian | 1. Enter an email already in the system. 2. Fill other fields with valid data. 3. Click "Add Member". | Email: `ba.nguyen@email.com` (existing — MEM002) | System rejects. Error message clearly states email already exists (NOT "invalid email"). | REQ-07 | EP |
 | TC-23 | Regular member cannot access member management | Logged in as Member | 1. Observe UI after login with member account. | Member: `dam.tran@email.com / password123` | No "Add Member" icon on AppBar. No "Members" tab shown. | REQ-07 | EP |
+| TC-34 | Add member with email missing "@" symbol — rejected | Logged in as Librarian, Add Member form open | 1. Enter email without "@" symbol. 2. Fill other fields with valid data. 3. Click "Add Member". | Email: `userdomain.com`, Name: `Test NoAt`, Phone: `0900000010` | System rejects. Validation error displayed (e.g. "Invalid email"). No new member is created. | REQ-07 | EP, BVA |
 
 ### REQ-08: Borrow Record Lookup
 
@@ -206,19 +213,20 @@ This section explains **why** each testing technique was selected for each requi
 | TC-25 | Librarian searches records by member ID | Logged in as Librarian | 1. Go to "Borrow / Return" tab → "Search Records" sub-tab. 2. Enter member ID. 3. Click "Search". | Member ID: `MEM002` | Displays MEM002's records: BR001 (Borrowed/Overdue) and BR004 (Returned). Records of other members not shown. | REQ-08 | EP |
 | TC-26 | Member sees only own borrow records | Logged in as MEM002 (`ba.nguyen@email.com`) | 1. Go to "Borrow / Return" tab. | — | Only MEM002's records shown (BR001, BR004). MEM003's record (BR002) and MEM006's record (BR003) not visible. | REQ-08 | EP |
 | TC-27 | Member cannot search by other member IDs | Logged in as MEM002 | 1. Go to "Borrow / Return" tab → check if member-ID search box exists. | — | No member-ID search input available. Member sees only own records automatically. | REQ-08 | EP |
+| TC-35 | Librarian searches records by non-existent member ID — no results | Logged in as Librarian | 1. Go to "Borrow / Return" tab → "Search Records" sub-tab. 2. Enter member ID that does not exist. 3. Click "Search". | Member ID: `MEM999` | System returns empty list or displays "No records found." message. No error crash. | REQ-08 | EP |
 
 ---
 
 ## Summary
 
-| Feature Group | # TCs | REQ Coverage | Techniques Applied |
-|--------------|-------|-------------|-------------------|
-| Login | 4 | REQ-01 | EP |
-| View Book List | 2 | REQ-02 | EP |
-| Search & Filter | 3 | REQ-03 | EP |
-| Borrow Book | 6 | REQ-04 | EP, BVA, Decision Table |
-| Return Book | 2 | REQ-05 | EP |
-| Overdue Handling | 2 | REQ-06 | EP |
-| Member Management | 4 | REQ-07 | EP, BVA |
-| Borrow Record Lookup | 4 | REQ-08 | EP |
-| **Total** | **27** | **8/8 REQ** | **EP + BVA + Decision Table** |
+| Feature Group | TCs | TC IDs | REQ Coverage | Techniques Applied |
+|--------------|-----|--------|-------------|-------------------|
+| Login | 6 | TC-01 to TC-04, TC-28, TC-29 | REQ-01 | EP |
+| View Book List | 3 | TC-05, TC-06, TC-30 | REQ-02 | EP |
+| Search & Filter | 5 | TC-07 to TC-09, TC-31, TC-32 | REQ-03 | EP |
+| Borrow Book | 7 | TC-10 to TC-15, TC-33 | REQ-04 | EP, BVA, Decision Table |
+| Return Book | 2 | TC-16, TC-17 | REQ-05 | EP |
+| Overdue Handling | 2 | TC-18, TC-19 | REQ-06 | EP |
+| Member Management | 5 | TC-20 to TC-23, TC-34 | REQ-07 | EP, BVA |
+| Borrow Record Lookup | 5 | TC-24 to TC-27, TC-35 | REQ-08 | EP |
+| **Total** | **35** | **TC-01 – TC-35** | **8/8 REQ** | **EP + BVA + Decision Table** |
