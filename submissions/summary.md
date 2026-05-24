@@ -15,7 +15,7 @@
 
 This report summarizes the results of manual black-box testing performed on the Library Management System (LMS) at https://stqa.rbc.vn. The testing covered all 8 functional requirements defined in the SRS (REQ-01 through REQ-08) using Equivalence Partitioning (EP), Boundary Value Analysis (BVA), and Decision Table techniques.
 
-A total of **27 test cases** were designed and executed. **4 defects** were identified, including one critical bug that violates a core business rule.
+A total of **35 test cases** were designed and executed. **4 defects** were identified, including one critical bug that violates a core business rule.
 
 ---
 
@@ -23,15 +23,15 @@ A total of **27 test cases** were designed and executed. **4 defects** were iden
 
 | Requirement | Description | TCs Designed | TCs Executed |
 |-------------|-------------|:------------:|:------------:|
-| REQ-01 | User Login | 4 | 4 |
-| REQ-02 | View Book List | 2 | 2 |
-| REQ-03 | Search & Filter Books | 3 | 3 |
-| REQ-04 | Borrow Book | 6 | 6 |
+| REQ-01 | User Login | 6 | 6 |
+| REQ-02 | View Book List | 3 | 3 |
+| REQ-03 | Search & Filter Books | 5 | 5 |
+| REQ-04 | Borrow Book | 7 | 7 |
 | REQ-05 | Return Book | 2 | 2 |
 | REQ-06 | Overdue Handling | 2 | 2 |
-| REQ-07 | Member Management | 4 | 4 |
-| REQ-08 | Borrow Record Lookup | 4 | 4 |
-| **Total** | | **27** | **27** |
+| REQ-07 | Member Management | 5 | 5 |
+| REQ-08 | Borrow Record Lookup | 5 | 5 |
+| **Total** | | **35** | **35** |
 
 ---
 
@@ -39,10 +39,10 @@ A total of **27 test cases** were designed and executed. **4 defects** were iden
 
 | Metric | Value |
 |--------|-------|
-| Total Test Cases | 27 |
-| Passed | 23 |
+| Total Test Cases | 35 |
+| Passed | 31 |
 | Failed | 4 |
-| Pass Rate | 85.2% |
+| Pass Rate | 88.6% |
 | Requirements Covered | 8 / 8 (100%) |
 | Defects Found | 4 |
 | Critical Defects | 1 (BUG-04) |
@@ -54,14 +54,14 @@ A total of **27 test cases** were designed and executed. **4 defects** were iden
 
 | REQ | Pass | Fail | Result |
 |-----|:----:|:----:|--------|
-| REQ-01 | 4 | 0 | ✅ All Pass |
-| REQ-02 | 2 | 0 | ✅ All Pass |
-| REQ-03 | 3 | 0 | ✅ All Pass |
-| REQ-04 | 5 | 1 | ⚠️ BUG-04 (Critical) |
+| REQ-01 | 6 | 0 | ✅ All Pass |
+| REQ-02 | 3 | 0 | ✅ All Pass |
+| REQ-03 | 5 | 0 | ✅ All Pass |
+| REQ-04 | 6 | 1 | ⚠️ BUG-04 (Critical) |
 | REQ-05 | 1 | 1 | ⚠️ BUG-01 (Medium) |
 | REQ-06 | 2 | 0 | ✅ All Pass |
-| REQ-07 | 2 | 2 | ⚠️ BUG-02 (High) + BUG-03 (Low) |
-| REQ-08 | 4 | 0 | ✅ All Pass |
+| REQ-07 | 3 | 2 | ⚠️ BUG-02 (High) + BUG-03 (Low) |
+| REQ-08 | 5 | 0 | ✅ All Pass |
 
 ---
 
@@ -165,7 +165,7 @@ The Library Management System demonstrates solid implementation of authenticatio
 
 | Overall Quality Assessment | ⚠️ Needs Improvement |
 |---|---|
-| Functional Correctness | 85.2% (23/27 TCs pass) |
+| Functional Correctness | 88.6% (31/35 TCs pass) |
 | Business Rule Compliance | ❌ Fails (critical limit not enforced) |
 | Data Integrity | ❌ At risk (invalid email accepted) |
 | UX / Error Messages | ⚠️ Needs improvement |
