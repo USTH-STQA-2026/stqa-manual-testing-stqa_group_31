@@ -15,7 +15,7 @@
 
 | Total TCs | PASS | FAIL | N/T |
 |-----------|------|------|-----|
-| 35 | 31 | 4 | 0 |
+| 39 | 31 | 8 | 0 |
 
 ---
 
@@ -49,6 +49,7 @@
 | TC-09 | Filter by genre | Genre: `Kinh tế` | Only Economics books | Filtered to show only genre "Kinh tế" books (BOOK007, BOOK014, BOOK015). | **PASS** | — | |
 | TC-31 | Search by author name | Keyword: `Nguyen Minh Duc` | Books by that author displayed | Books authored by "Nguyễn Minh Đức" displayed. No unrelated books shown. Search works on author field. | **PASS** | — | |
 | TC-32 | Partial keyword search returns multiple results | Keyword: `Python` | All books with "Python" in title shown | Books containing "Python" in title displayed (BOOK002 "Lập trình Python nâng cao", BOOK010 "Python for Data Science"). List is not limited to exact match. | **PASS** | — | |
+| TC-39 | Category filter works in English mode | Category: `Technology` (EN mode active) | "No books found." displayed | **Category filter returned "No books found."** despite Technology books existing. Filter only works when Vietnamese term "Công nghê" is typed. Hint text still shows Vietnamese categories in EN mode. | **FAIL** | BUG-08 | Category filter not localized — EN mode unusable for category filtering |
 
 ### REQ-04: Borrow Book
 
@@ -85,6 +86,9 @@
 | TC-22 | Add member with duplicate email | Email: `ba.nguyen@email.com` (MEM002) | Reject. Error: "Email already exists" | System rejected the submission but displayed misleading message "Email không hợp lệ." ("Invalid email") instead of indicating the email already exists. | **FAIL** | BUG-03 | Wrong error message confuses users |
 | TC-23 | Regular member cannot manage members | Member: `dam.tran@email.com` | No "Add Member" icon. No "Members" tab. | After member login: no add-member icon in AppBar, no "Thành viên" tab in navigation. | **PASS** | — | |
 | TC-34 | Add member with email missing "@" symbol | Email: `userdomain.com`, Name: `Test NoAt`, Phone: `0900000010` | System rejects with validation error | System displayed validation error "Email không hợp lệ." and rejected the submission. No new member created. The missing "@" was detected by client-side validation. | **PASS** | — | Basic "@" check works; dot-in-domain check does not (BUG-02) |
+| TC-36 | Add member with non-numeric phone (alphabetic) | Name: `Le Van Test`, Email: `levantest2@example.com`, Phone: `abcdefghij` | System rejects with validation error | **System accepted the submission.** Toast "Thêm thành viên thành công! Mã: MEM00X" displayed. Member created with alphabetic phone number stored in database. | **FAIL** | BUG-05 | High severity: no server-side phone format validation |
+| TC-37 | Add member with empty name field | Name: *(empty)*, Email: `validuser@example.com`, Phone: `0912000002` | System rejects. Error identifies name field | System rejected submission but displayed misleading **"Email không hợp lệ."** — the name field was empty, not the email. | **FAIL** | BUG-06 | Wrong error message — all validation failures show "Email không hợp lệ." |
+| TC-38 | Add member with empty phone field | Name: `Test Empty Phone`, Email: `emptyphonetest@example.com`, Phone: *(empty)* | System rejects. Error identifies phone field | System rejected submission but displayed misleading **"Email không hợp lệ."** — the phone field was empty, not the email. | **FAIL** | BUG-07 | Wrong error message — all validation failures show "Email không hợp lệ." |
 
 ### REQ-08: Borrow Record Lookup
 
@@ -106,6 +110,10 @@
 | BUG-02 | High | TC-21 | Invalid email format `user@domain` accepted when adding a member |
 | BUG-03 | Low | TC-22 | Duplicate email shows misleading "Invalid email" message instead of "Email already exists" |
 | BUG-04 | Critical | TC-13 | System allows borrowing beyond the 3-book limit per member |
+| BUG-05 | High | TC-36 | Non-numeric phone number (e.g. `abcdefghij`) accepted when adding a member |
+| BUG-06 | Medium | TC-37 | Empty name field shows "Email không hợp lệ." instead of name-specific error |
+| BUG-07 | Medium | TC-38 | Empty phone field shows "Email không hợp lệ." instead of phone-specific error |
+| BUG-08 | Medium | TC-39 | Category filter returns no results when English category names are typed in EN mode |
 
 ---
 
@@ -115,10 +123,10 @@
 |-----|-----|------|------|----------|
 | REQ-01 | 6 | 6 | 0 | ✅ Full |
 | REQ-02 | 3 | 3 | 0 | ✅ Full |
-| REQ-03 | 5 | 5 | 0 | ✅ Full |
+| REQ-03 | 6 | 5 | 1 (TC-39) | ⚠️ Bug found |
 | REQ-04 | 7 | 6 | 1 (TC-13) | ⚠️ Bug found |
 | REQ-05 | 2 | 1 | 1 (TC-17) | ⚠️ Bug found |
 | REQ-06 | 2 | 2 | 0 | ✅ Full |
-| REQ-07 | 5 | 3 | 2 (TC-21, TC-22) | ⚠️ Bugs found |
+| REQ-07 | 8 | 3 | 5 (TC-21, TC-22, TC-36, TC-37, TC-38) | ⚠️ Bugs found |
 | REQ-08 | 5 | 5 | 0 | ✅ Full |
-| **Total** | **35** | **31** | **4** | **8/8 REQ tested** |
+| **Total** | **39** | **31** | **8** | **8/8 REQ tested** |

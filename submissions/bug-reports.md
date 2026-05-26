@@ -17,6 +17,10 @@
 | BUG-02 | Invalid email format accepted when adding a member | High | P1 | Open | TC-21 |
 | BUG-03 | Misleading error message for duplicate email on member add | Low | P3 | Open | TC-22 |
 | BUG-04 | System allows borrowing beyond the 3-book limit per member | Critical | P1 | Open | TC-13 |
+| BUG-05 | Invalid phone number (non-numeric) accepted by server | High | P1 | Open | TC-36 |
+| BUG-06 | Empty name field triggers "Email không hợp lệ." instead of name-specific error | Medium | P2 | Open | TC-37 |
+| BUG-07 | Empty phone field triggers "Email không hợp lệ." instead of phone-specific error | Medium | P2 | Open | TC-38 |
+| BUG-08 | Category filter returns no results when English category names are entered in EN mode | Medium | P2 | Open | TC-39 |
 
 ---
 
@@ -236,6 +240,222 @@ At step 6, the system:
 
 ---
 
+---
+
+## BUG-05 — Invalid Phone Number (Non-Numeric) Accepted by Server
+
+| Field | Detail |
+|---|---|
+| **Bug ID** | BUG-05 |
+| **Title** | Phone number field accepts purely alphabetic input (e.g., `abcdefghij`) and creates a member record |
+| **Severity** | High |
+| **Priority** | P1 |
+| **Status** | Open |
+| **Found in TC** | TC-36 |
+| **REQ** | REQ-07 |
+| **Date Found** | 26/05/2026 |
+| **Reporter** | Group 31 |
+
+### Description
+
+According to SRS REQ-07, member phone numbers must be in a valid format. When a librarian enters a phone number consisting entirely of non-numeric characters (e.g., `abcdefghij`), the system's client-side validation passes the input and the server accepts it, creating a new member record with an invalid phone number stored in the database.
+
+### Steps to Reproduce
+
+1. Log in as Librarian (`librarian@library.com` / `admin123`).
+2. Navigate to "Thành viên" (Members) tab and click the "Add Member" icon.
+3. Enter:
+   - Name: `Le Van Test`
+   - Email: `levantest2@example.com`
+   - Phone: `abcdefghij` *(alphabetic — clearly not a phone number)*
+4. Click "Thêm thành viên" (Add Member).
+
+### Expected Result
+
+The system should reject the submission with an error such as:
+> "Phone number must contain digits only."
+
+No new member record should be created.
+
+### Actual Result
+
+The system accepts the input and displays:
+> **"Thêm thành viên thành công! Mã: MEM00X"**
+
+A new member is created with the alphabetic string stored as their phone number.
+
+### Impact
+
+- Data integrity is compromised: non-numeric phone numbers are stored in the database.
+- Contact information is unusable for SMS notifications or verification.
+- The same gap that allows BUG-02 (missing server-side validation) affects the phone field as well.
+
+### Evidence
+
+![BUG-05 Screenshot Evidence](evidence/screenshot_BUG05.png)
+
+*The screenshot shows the Add Member form with phone field set to `abcdefghij`. The system responds with the success toast "Thêm thành viên thành công!" — confirming the invalid phone number was accepted and stored.*
+
+---
+
+## BUG-06 — Empty Name Field Shows "Email không hợp lệ." Instead of Name-Specific Error
+
+| Field | Detail |
+|---|---|
+| **Bug ID** | BUG-06 |
+| **Title** | Submitting Add Member with empty name field displays incorrect error "Email không hợp lệ." |
+| **Severity** | Medium |
+| **Priority** | P2 |
+| **Status** | Open |
+| **Found in TC** | TC-37 |
+| **REQ** | REQ-07 |
+| **Date Found** | 26/05/2026 |
+| **Reporter** | Group 31 |
+
+### Description
+
+When a librarian submits the Add Member form with the name field left empty (or containing only whitespace), the system correctly rejects the submission but displays the wrong error message: **"Email không hợp lệ."** ("Invalid email."). The name field is the actual failing field, not the email field. This reveals that the system uses a single hardcoded error message for all client-side validation failures, regardless of which field is actually invalid.
+
+### Steps to Reproduce
+
+1. Log in as Librarian (`librarian@library.com` / `admin123`).
+2. Click the "Add Member" icon on the AppBar.
+3. Enter:
+   - Name: *(leave completely empty)*
+   - Email: `validuser@example.com`
+   - Phone: `0912000002`
+4. Click "Thêm thành viên" (Add Member).
+
+### Expected Result
+
+The system should reject the submission with a field-specific error such as:
+> "Name is required."
+
+### Actual Result
+
+The system rejects the submission but displays:
+> **"Email không hợp lệ."** ("Invalid email.")
+
+The error incorrectly points to the email field, which is valid.
+
+### Impact
+
+- Poor user experience: librarians cannot identify which field is causing the validation failure.
+- The error message directly misleads the user about the cause of the issue.
+- Users may spend time re-entering a valid email when the actual problem is the empty name.
+
+### Evidence
+
+![BUG-06 Screenshot Evidence](evidence/screenshot_BUG06.png)
+
+*The screenshot shows the Add Member form with an empty name field, a valid email, and a valid phone number. The system displays "Email không hợp lệ." — incorrectly blaming the email field when the actual failing constraint is the empty name.*
+
+---
+
+## BUG-07 — Empty Phone Field Shows "Email không hợp lệ." Instead of Phone-Specific Error
+
+| Field | Detail |
+|---|---|
+| **Bug ID** | BUG-07 |
+| **Title** | Submitting Add Member with empty phone field displays incorrect error "Email không hợp lệ." |
+| **Severity** | Medium |
+| **Priority** | P2 |
+| **Status** | Open |
+| **Found in TC** | TC-38 |
+| **REQ** | REQ-07 |
+| **Date Found** | 26/05/2026 |
+| **Reporter** | Group 31 |
+
+### Description
+
+When a librarian submits the Add Member form with the phone field left empty, the system rejects the submission but displays **"Email không hợp lệ."** ("Invalid email.") — the wrong error message. This is the same systemic issue as BUG-06: all member-form validation failures surface as "Invalid email", regardless of which field is actually failing.
+
+### Steps to Reproduce
+
+1. Log in as Librarian (`librarian@library.com` / `admin123`).
+2. Click the "Add Member" icon on the AppBar.
+3. Enter:
+   - Name: `Test Empty Phone`
+   - Email: `emptyphonetest@example.com`
+   - Phone: *(leave completely empty)*
+4. Click "Thêm thành viên" (Add Member).
+
+### Expected Result
+
+The system should reject the submission with a field-specific error such as:
+> "Phone number is required."
+
+### Actual Result
+
+The system rejects the submission but displays:
+> **"Email không hợp lệ."** ("Invalid email.")
+
+The error message incorrectly references the email field, which contains a valid address.
+
+### Impact
+
+- Librarians cannot distinguish between an email format error, an empty name, an empty phone, or a short phone number — all produce the same misleading message.
+- Combined with BUG-05, BUG-06, and BUG-03, this demonstrates a systemic lack of proper per-field error reporting across the member management module.
+
+### Evidence
+
+![BUG-07 Screenshot Evidence](evidence/screenshot_BUG07.png)
+
+*The screenshot shows the Add Member form: valid name, valid email, empty phone field. The system displays "Email không hợp lệ." — the same incorrect error regardless of which field caused the validation failure.*
+
+---
+
+## BUG-08 — Category Filter Returns No Results When English Category Names Are Entered in EN Mode
+
+| Field | Detail |
+|---|---|
+| **Bug ID** | BUG-08 |
+| **Title** | Category filter is non-functional in English UI mode — English category names return "No books found." |
+| **Severity** | Medium |
+| **Priority** | P2 |
+| **Status** | Open |
+| **Found in TC** | TC-39 |
+| **REQ** | REQ-03 |
+| **Date Found** | 26/05/2026 |
+| **Reporter** | Group 31 |
+
+### Description
+
+The system supports a VI/EN language toggle in the AppBar. When a user switches to English mode (EN), the UI chrome (titles, labels, placeholders, navigation tabs) correctly translates to English. However, the category filter input does not translate the underlying category values. When an English-mode user enters a category name in English (e.g., "Technology"), the filter returns **"No books found."** even though Technology books exist. The filter only works when the user types the Vietnamese category name (e.g., "Công nghê"). Additionally, the hint text still lists categories in Vietnamese even in English mode, creating a confusing mismatch.
+
+### Steps to Reproduce
+
+1. Log in as Librarian (`librarian@library.com` / `admin123`).
+2. Click the **"EN"** language toggle in the AppBar to switch to English mode.
+3. Observe that the hint below the filter reads: *"Available categories: Công nghê, Giáo dục, Kinh tế, Kỹ năng mềm, Quản trị, Văn học"* (all Vietnamese).
+4. Click the category filter field and type **`Technology`**.
+5. Observe the result.
+
+### Expected Result
+
+Typing "Technology" in EN mode should filter and display all Technology books (those with category "Công nghê" in the database), because the system should map the English category label to the underlying Vietnamese stored value.
+
+### Actual Result
+
+The system displays:
+> **"No books found."**
+
+No books are returned. The filter only works correctly when the user types the Vietnamese category name `Công nghê`, which is counterintuitive for users in English mode.
+
+### Impact
+
+- The category filter feature is completely unusable in English mode without prior knowledge of Vietnamese category names.
+- This is a functional regression for any non-Vietnamese user attempting to use the system in English.
+- The hint text ("Available categories: Công nghê...") in Vietnamese further confuses English-mode users.
+
+### Evidence
+
+![BUG-08 Screenshot Evidence](evidence/screenshot_BUG08.png)
+
+*The screenshot shows the system in English mode (EN active in AppBar). The category filter contains "Technology" and the result area shows "No books found." The hint line still displays Vietnamese category names, demonstrating that the localization is incomplete for the filter feature.*
+
+---
+
 ## Root Cause Analysis (Preliminary)
 
 | Bug ID | Likely Root Cause | Affected Layer |
@@ -244,3 +464,7 @@ At step 6, the system:
 | BUG-02 | Email validation is client-side only or regex is too permissive (accepts `@` without requiring `.` in domain) | Validation / Backend |
 | BUG-03 | Error message mapping: duplicate email constraint from DB is incorrectly displayed as "invalid format" | Backend / Error Handling |
 | BUG-04 | Borrow limit check is missing or not triggered in the borrow workflow | Business Logic / Backend |
+| BUG-05 | Phone number field has no server-side format validation; only `@` presence is checked (same as BUG-02) | Validation / Backend |
+| BUG-06 | All Add Member form validation failures map to a single hardcoded error string "Email không hợp lệ." | Frontend / Error Handling |
+| BUG-07 | Same root cause as BUG-06 — single catch-all error message regardless of failing field | Frontend / Error Handling |
+| BUG-08 | Category filter compares user input against raw stored Vietnamese values without locale-aware mapping | Frontend / Localization |

@@ -15,7 +15,7 @@
 
 This report summarizes the results of manual black-box testing performed on the Library Management System (LMS) at https://stqa.rbc.vn. The testing covered all 8 functional requirements defined in the SRS (REQ-01 through REQ-08) using Equivalence Partitioning (EP), Boundary Value Analysis (BVA), and Decision Table techniques.
 
-A total of **35 test cases** were designed and executed. **4 defects** were identified, including one critical bug that violates a core business rule.
+A total of **39 test cases** were designed and executed. **8 defects** were identified, including one critical bug that violates a core business rule.
 
 ---
 
@@ -25,13 +25,13 @@ A total of **35 test cases** were designed and executed. **4 defects** were iden
 |-------------|-------------|:------------:|:------------:|
 | REQ-01 | User Login | 6 | 6 |
 | REQ-02 | View Book List | 3 | 3 |
-| REQ-03 | Search & Filter Books | 5 | 5 |
+| REQ-03 | Search & Filter Books | 6 | 6 |
 | REQ-04 | Borrow Book | 7 | 7 |
 | REQ-05 | Return Book | 2 | 2 |
 | REQ-06 | Overdue Handling | 2 | 2 |
-| REQ-07 | Member Management | 5 | 5 |
+| REQ-07 | Member Management | 8 | 8 |
 | REQ-08 | Borrow Record Lookup | 5 | 5 |
-| **Total** | | **35** | **35** |
+| **Total** | | **39** | **39** |
 
 ---
 
@@ -39,15 +39,15 @@ A total of **35 test cases** were designed and executed. **4 defects** were iden
 
 | Metric | Value |
 |--------|-------|
-| Total Test Cases | 35 |
+| Total Test Cases | 39 |
 | Passed | 31 |
-| Failed | 4 |
-| Pass Rate | 88.6% |
+| Failed | 8 |
+| Pass Rate | 79.5% |
 | Requirements Covered | 8 / 8 (100%) |
-| Defects Found | 4 |
+| Defects Found | 8 |
 | Critical Defects | 1 (BUG-04) |
-| High Defects | 1 (BUG-02) |
-| Medium Defects | 1 (BUG-01) |
+| High Defects | 2 (BUG-02, BUG-05) |
+| Medium Defects | 4 (BUG-01, BUG-06, BUG-07, BUG-08) |
 | Low Defects | 1 (BUG-03) |
 
 ### Pass/Fail by Requirement
@@ -56,11 +56,11 @@ A total of **35 test cases** were designed and executed. **4 defects** were iden
 |-----|:----:|:----:|--------|
 | REQ-01 | 6 | 0 | ✅ All Pass |
 | REQ-02 | 3 | 0 | ✅ All Pass |
-| REQ-03 | 5 | 0 | ✅ All Pass |
+| REQ-03 | 5 | 1 | ⚠️ BUG-08 (Medium) |
 | REQ-04 | 6 | 1 | ⚠️ BUG-04 (Critical) |
 | REQ-05 | 1 | 1 | ⚠️ BUG-01 (Medium) |
 | REQ-06 | 2 | 0 | ✅ All Pass |
-| REQ-07 | 3 | 2 | ⚠️ BUG-02 (High) + BUG-03 (Low) |
+| REQ-07 | 3 | 5 | ⚠️ BUG-02 (High) + BUG-03 (Low) + BUG-05 (High) + BUG-06 (Medium) + BUG-07 (Medium) |
 | REQ-08 | 5 | 0 | ✅ All Pass |
 
 ---
@@ -71,7 +71,11 @@ A total of **35 test cases** were designed and executed. **4 defects** were iden
 |--------|-------|----------|-----|----|
 | BUG-04 | System allows borrowing beyond the 3-book limit per member | **Critical** | REQ-04 | TC-13 |
 | BUG-02 | Invalid email format `user@domain` accepted when adding a member | **High** | REQ-07 | TC-21 |
+| BUG-05 | Non-numeric phone number (e.g. `abcdefghij`) accepted when adding a member | **High** | REQ-07 | TC-36 |
 | BUG-01 | No overdue warning displayed when returning an overdue book | **Medium** | REQ-05 | TC-17 |
+| BUG-06 | Empty name field shows "Email không hợp lệ." instead of name-specific error | **Medium** | REQ-07 | TC-37 |
+| BUG-07 | Empty phone field shows "Email không hợp lệ." instead of phone-specific error | **Medium** | REQ-07 | TC-38 |
+| BUG-08 | Category filter returns no results when English category names are entered in EN mode | **Medium** | REQ-03 | TC-39 |
 | BUG-03 | Misleading "Invalid email" message shown for duplicate email | **Low** | REQ-07 | TC-22 |
 
 ---
@@ -89,7 +93,7 @@ Applied to all 8 requirements. Each input domain was partitioned into valid and 
 Applied to REQ-04 (Borrow Book) for the 3-book borrow limit. Boundary values tested:
 - 0 books (lower boundary) → TC-10
 - 1 book (within range) → TC-11
-- 2 books (within range) → TC-12
+- 2 books (within range) → TC-11
 - 3 books (at upper boundary / limit) → TC-12
 - 4 books (over boundary) → TC-13 (**BUG-04 discovered here**)
 
@@ -161,12 +165,13 @@ The following fixes are recommended in priority order based on defect severity, 
 
 The Library Management System demonstrates solid implementation of authentication, role-based access, search, and record isolation features. However, the **failure to enforce the 3-book borrow limit** (BUG-04) represents a critical gap that directly contradicts a stated business requirement in the SRS. Combined with the email validation issue (BUG-02), the system currently has data integrity and business rule compliance risks that should be addressed before any production release.
 
-**Recommendation**: The system should **not be released** until BUG-04 and BUG-02 are resolved. BUG-01 and BUG-03 can be addressed in a follow-up patch.
+**Recommendation**: The system should **not be released** until BUG-04, BUG-02, and BUG-05 are resolved. BUG-01, BUG-06, BUG-07, BUG-08, and BUG-03 can be addressed in follow-up patches.
 
 | Overall Quality Assessment | ⚠️ Needs Improvement |
 |---|---|
-| Functional Correctness | 88.6% (31/35 TCs pass) |
+| Functional Correctness | 79.5% (31/39 TCs pass) |
 | Business Rule Compliance | ❌ Fails (critical limit not enforced) |
-| Data Integrity | ❌ At risk (invalid email accepted) |
-| UX / Error Messages | ⚠️ Needs improvement |
+| Data Integrity | ❌ At risk (invalid email and phone accepted) |
+| UX / Error Messages | ❌ Needs significant improvement (5 wrong-message bugs) |
+| Localization / i18n | ❌ Incomplete (category filter broken in EN mode) |
 | Release Readiness | ❌ Not recommended without fixes |

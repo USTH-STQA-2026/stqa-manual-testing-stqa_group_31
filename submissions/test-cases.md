@@ -168,6 +168,7 @@ This section explains **why** each testing technique was selected for each requi
 | TC-09 | Filter books by genre | Logged in, on "Books" tab | 1. Enter genre in filter box. 2. Observe results. | Genre: `Kinh tế` | Only Economics books displayed (BOOK007, BOOK014, BOOK015). | REQ-03 | EP |
 | TC-31 | Search by author name — returns matching books | Logged in, on "Books" tab | 1. Enter an author name that exists in the DB. 2. Observe results. | Keyword: `Nguyen Minh Duc` | All books whose author name contains "Nguyen Minh Duc" are displayed. No unrelated books shown. | REQ-03 | EP |
 | TC-32 | Partial keyword search returns all matching results | Logged in, on "Books" tab | 1. Enter a partial keyword that matches multiple titles. 2. Observe results. | Keyword: `Python` | All books with "Python" in title or author are displayed (at least 2 results if available). Search is not limited to exact match. | REQ-03 | EP |
+| TC-39 | Category filter works correctly in English UI mode | Logged in, UI switched to EN mode | 1. Click "EN" language toggle. 2. Click the category filter field. 3. Type the English category name "Technology". 4. Observe results. | Category: `Technology` (EN mode active) | Books in the "Technology" / "Công nghê" category are displayed. Filter should work regardless of UI language. | REQ-03 | EP |
 
 ### REQ-04: Borrow Book
 
@@ -204,6 +205,9 @@ This section explains **why** each testing technique was selected for each requi
 | TC-22 | Add member with already-existing email | Logged in as Librarian | 1. Enter an email already in the system. 2. Fill other fields with valid data. 3. Click "Add Member". | Email: `ba.nguyen@email.com` (existing — MEM002) | System rejects. Error message clearly states email already exists (NOT "invalid email"). | REQ-07 | EP |
 | TC-23 | Regular member cannot access member management | Logged in as Member | 1. Observe UI after login with member account. | Member: `dam.tran@email.com / password123` | No "Add Member" icon on AppBar. No "Members" tab shown. | REQ-07 | EP |
 | TC-34 | Add member with email missing "@" symbol — rejected | Logged in as Librarian, Add Member form open | 1. Enter email without "@" symbol. 2. Fill other fields with valid data. 3. Click "Add Member". | Email: `userdomain.com`, Name: `Test NoAt`, Phone: `0900000010` | System rejects. Validation error displayed (e.g. "Invalid email"). No new member is created. | REQ-07 | EP, BVA |
+| TC-36 | Add member with purely non-numeric phone — server-side rejection check | Logged in as Librarian, Add Member form open | 1. Enter valid name and email. 2. Enter an alphabetic phone number. 3. Click "Add Member". | Name: `Le Van Test`, Email: `levantest2@example.com`, Phone: `abcdefghij` | System rejects. Error: "Invalid phone number format." No new member created. | REQ-07 | EP |
+| TC-37 | Add member with empty name field — check error specificity | Logged in as Librarian, Add Member form open | 1. Leave name field empty. 2. Enter valid email and phone. 3. Click "Add Member". | Name: *(empty)*, Email: `validuser@example.com`, Phone: `0912000002` | System rejects. Error specifically identifies name field (e.g., "Name is required."). NOT "Email không hợp lệ.". | REQ-07 | EP |
+| TC-38 | Add member with empty phone field — check error specificity | Logged in as Librarian, Add Member form open | 1. Enter valid name and email. 2. Leave phone field empty. 3. Click "Add Member". | Name: `Test Empty Phone`, Email: `emptyphonetest@example.com`, Phone: *(empty)* | System rejects. Error specifically identifies phone field (e.g., "Phone number is required."). NOT "Email không hợp lệ.". | REQ-07 | EP |
 
 ### REQ-08: Borrow Record Lookup
 
@@ -223,10 +227,10 @@ This section explains **why** each testing technique was selected for each requi
 |--------------|-----|--------|-------------|-------------------|
 | Login | 6 | TC-01 to TC-04, TC-28, TC-29 | REQ-01 | EP |
 | View Book List | 3 | TC-05, TC-06, TC-30 | REQ-02 | EP |
-| Search & Filter | 5 | TC-07 to TC-09, TC-31, TC-32 | REQ-03 | EP |
+| Search & Filter | 6 | TC-07 to TC-09, TC-31, TC-32, TC-39 | REQ-03 | EP |
 | Borrow Book | 7 | TC-10 to TC-15, TC-33 | REQ-04 | EP, BVA, Decision Table |
 | Return Book | 2 | TC-16, TC-17 | REQ-05 | EP |
 | Overdue Handling | 2 | TC-18, TC-19 | REQ-06 | EP |
-| Member Management | 5 | TC-20 to TC-23, TC-34 | REQ-07 | EP, BVA |
+| Member Management | 8 | TC-20 to TC-23, TC-34, TC-36, TC-37, TC-38 | REQ-07 | EP, BVA |
 | Borrow Record Lookup | 5 | TC-24 to TC-27, TC-35 | REQ-08 | EP |
-| **Total** | **35** | **TC-01 – TC-35** | **8/8 REQ** | **EP + BVA + Decision Table** |
+| **Total** | **39** | **TC-01 – TC-39** | **8/8 REQ** | **EP + BVA + Decision Table** |
